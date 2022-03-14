@@ -6,15 +6,14 @@ marked.setOptions({
     breaks: true,
 })
 
-function App() {
-
+const App = () => {
     const parseMarkdown = (text) => marked.parse(text)
 
     const initialInput = "# Heading level 1\n"
         + "## Heading level 2\n"
         + "**MARKDOWN** Previewer\n"
         + "![Logo Maker](https://global-uploads.webflow.com/5e157547d6f791d34ea4e2bf/6087f2b060c7a92408bac811_logo.svg)\n"
-        + "[Google Search](https://google.com)\n\n"
+        + "[Google Search](https://google.com)\n"
         + "Inline `code`\n"
         + "```\n"
         + "const variable = 'Hello World';\n"
