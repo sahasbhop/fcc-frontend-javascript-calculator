@@ -35,13 +35,31 @@ const App = () => {
     }
 
     const onClickOperand = (event) => {
-        if (operator) {
-            calculateResult()
-        } else {
+        const id = event.target.id;
+
+        if (!operator) {
             setBaseNumber(parseFloat(display))
+            setOperator(id)
+            setNextNumberAwaited(true)
+            return
         }
-        setOperator(event.target.id)
-        setNextNumberAwaited(true)
+        if (operator && !nextNumberAwaited) {
+            if (isNaN(parseFloat(display))) {
+                setDisplay(baseNumber.toString())
+                setOperator(id)
+                setNextNumberAwaited(true)
+            } else {
+                calculateResult()
+                setOperator(id)
+                setNextNumberAwaited(true)
+            }
+            return
+        }
+        if (operator && nextNumberAwaited && id === 'subtract') {
+            console.log('awaiting negative value')
+            setNextNumberAwaited(false)
+            setDisplay('-')
+        }
     }
 
     const onClickEquals = () => {
