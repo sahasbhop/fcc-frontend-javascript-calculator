@@ -38,27 +38,28 @@ const App = () => {
         const id = event.target.id;
 
         if (!operator) {
+            setOperator(id)
             setBaseNumber(parseFloat(display))
+            setNextNumberAwaited(true)
+        } else if (nextNumberAwaited) {
+            if (id === 'subtract') {
+                console.log('Prompt to input negative value')
+                setDisplay('-')
+                setNextNumberAwaited(false)
+            } else {
+                console.log(`Change operator to ${id}`)
+                setOperator(id)
+            }
+        } else if (isNaN(parseFloat(display))) {
+            console.log('Fail to input negative value')
+            setDisplay(baseNumber.toString())
             setOperator(id)
             setNextNumberAwaited(true)
-            return
-        }
-        if (operator && !nextNumberAwaited) {
-            if (isNaN(parseFloat(display))) {
-                setDisplay(baseNumber.toString())
-                setOperator(id)
-                setNextNumberAwaited(true)
-            } else {
-                calculateResult()
-                setOperator(id)
-                setNextNumberAwaited(true)
-            }
-            return
-        }
-        if (operator && nextNumberAwaited && id === 'subtract') {
-            console.log('awaiting negative value')
-            setNextNumberAwaited(false)
-            setDisplay('-')
+        } else {
+            console.log('Calculate automatically')
+            calculateResult()
+            setOperator(id)
+            setNextNumberAwaited(true)
         }
     }
 
