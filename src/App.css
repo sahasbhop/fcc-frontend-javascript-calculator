@@ -1,5 +1,74 @@
 #app {
+    height: 100vh;
+    width: 65vw;
+    margin: auto;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    justify-content: center;
+    align-content: center;
+    max-width: 300px;
+    min-width: 200px;
+}
+
+#display {
+    background: #525056;
+    color: white;
+    font-size: 48px;
+    font-weight: lighter;
+    text-align: end;
+    padding: 4px 8px 4px 8px;
+    flex: 14;
+}
+
+.clear-bg {
+    background: red;
+    flex: 1;
+}
+.clear-bg:active {
+    background: darkred;
+}
+
+#horizontal {
+    display: flex;
+    flex-direction: row;
+}
+
+.small-key {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #525056;
+    color: white;
+    flex: 1;
+    padding: 8px 0 8px 0;
+    text-align: center;
+    user-select: none;
+}
+
+.operand-bg {
+    background: #f2a33c;
+}
+
+.number-bg {
+    background: #7c7a7f;
+}
+
+.number-bg:active {
+    background: #636266;
+}
+
+.operand-bg:active {
+    background: #ca8834;
+}
+
+.dummy-bg {
+    background: #7c7a7f;
+}
+
+.light {
+    font-size: 24px;
+    font-weight: lighter;
+}
+
+.heavy {
+    font-size: 22px;
 }
