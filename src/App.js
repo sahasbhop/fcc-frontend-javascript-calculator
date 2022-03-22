@@ -5,26 +5,33 @@ const App = () => {
     const [display, setDisplay] = useState('0')
     const [baseNumber, setBaseNumber] = useState(0.0)
     const [operator, setOperator] = useState(null)
+    const [nextNumberAwaited, setNextNumberAwaited] = useState(false)
 
     const onClear = () => {
         setDisplay('0')
+        setBaseNumber(0.0)
+        setOperator(null)
+        setNextNumberAwaited(false)
     }
 
     const onClickNumber = (event) => {
         const id = event.target.id;
 
         if (id === 'decimal') {
-            setDisplay((prevState) => hasDecimal(prevState) ? prevState : prevState + '.')
-            return
+            setDisplay((prevState) => hasDecimal(prevState) ? prevState : nextNumberAwaited ? '0.' : prevState + '.')
+        } else {
+            setDisplay((prevState) => {
+                const number = id === 'zero' ? '0' : id === 'one' ? '1' : id === 'two' ? '2' : id === 'three' ? '3' : id === 'four' ? '4' : id === 'five' ? '5' : id === 'six' ? '6' : id === 'seven' ? '7' : id === 'eight' ? '8' : id === 'nine' ? '9' : '';
+                if (prevState === '0') {
+                    return number
+                } else if (nextNumberAwaited) {
+                    return number
+                } else {
+                    return prevState.concat(number)
+                }
+            })
         }
-        setDisplay((prevState) => {
-            const number = id === 'zero' ? '0' : id === 'one' ? '1' : id === 'two' ? '2' : id === 'three' ? '3' : id === 'four' ? '4' : id === 'five' ? '5' : id === 'six' ? '6' : id === 'seven' ? '7' : id === 'eight' ? '8' : id === 'nine' ? '9' : '';
-            if (prevState === '0') {
-                return number
-            } else {
-                return prevState.concat(number)
-            }
-        })
+        if (nextNumberAwaited) setNextNumberAwaited(false)
     }
 
     const onClickOperand = (event) => {
@@ -34,7 +41,7 @@ const App = () => {
             setBaseNumber(parseFloat(display))
         }
         setOperator(event.target.id)
-        setDisplay('0')
+        setNextNumberAwaited(true)
     }
 
     const onClickEquals = () => {
