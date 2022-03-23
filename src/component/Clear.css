@@ -1,0 +1,8 @@
+.clear-bg {
+    background: red;
+    flex: 1;
+}
+
+.clear-bg:active {
+    background: darkred;
+}

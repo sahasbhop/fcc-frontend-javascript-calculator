@@ -1,0 +1,10 @@
+.input-display {
+    background: #525056;
+    color: white;
+    font-size: 44px;
+    font-weight: lighter;
+    text-align: end;
+    padding: 4px 8px 4px 8px;
+    flex: 14;
+    user-select: none;
+}

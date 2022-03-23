@@ -1,27 +1,35 @@
 import './App.css';
 import {useState} from "react";
+import ValueInput from "./component/ValueInput";
+import Operand, {
+    OPERAND_ADD,
+    OPERAND_DIVIDE,
+    OPERAND_EQUALS,
+    OPERAND_MULTIPLY,
+    OPERAND_SUBTRACT,
+    OPERANDS
+} from "./component/Operand";
+import InputDisplay from "./component/InputDisplay";
+import Clear from "./component/Clear";
 
 const App = () => {
     const [display, setDisplay] = useState('0')
     const [baseNumber, setBaseNumber] = useState(0.0)
-    const [operator, setOperator] = useState(null)
+    const [activeOperand, setActiveOperand] = useState(null)
     const [nextNumberAwaited, setNextNumberAwaited] = useState(false)
 
     const onClear = () => {
         setDisplay('0')
         setBaseNumber(0.0)
-        setOperator(null)
+        setActiveOperand(null)
         setNextNumberAwaited(false)
     }
 
-    const onClickNumber = (event) => {
-        const id = event.target.id;
-
-        if (id === 'decimal') {
-            setDisplay((prevState) => hasDecimal(prevState) ? prevState : nextNumberAwaited ? '0.' : prevState + '.')
+    const onValueInputEnter = (number) => {
+        if (number === '.') {
+            setDisplay((prevState) => prevState.match(/\./g) ? prevState : nextNumberAwaited ? '0.' : prevState + '.')
         } else {
             setDisplay((prevState) => {
-                const number = id === 'zero' ? '0' : id === 'one' ? '1' : id === 'two' ? '2' : id === 'three' ? '3' : id === 'four' ? '4' : id === 'five' ? '5' : id === 'six' ? '6' : id === 'seven' ? '7' : id === 'eight' ? '8' : id === 'nine' ? '9' : '';
                 if (prevState === '0') {
                     return number
                 } else if (nextNumberAwaited) {
@@ -34,103 +42,84 @@ const App = () => {
         if (nextNumberAwaited) setNextNumberAwaited(false)
     }
 
-    const onClickOperand = (event) => {
-        const id = event.target.id;
-
-        if (!operator) {
-            setOperator(id)
+    const onOperandEnter = (operand) => {
+        if (!activeOperand) {
+            setActiveOperand(operand)
             setBaseNumber(parseFloat(display))
             setNextNumberAwaited(true)
         } else if (nextNumberAwaited) {
-            if (id === 'subtract') {
-                console.log('Prompt to input negative value')
+            if (operand === OPERAND_SUBTRACT) {
                 setDisplay('-')
                 setNextNumberAwaited(false)
             } else {
-                console.log(`Change operator to ${id}`)
-                setOperator(id)
+                console.log(`Change operand to ${operand}`)
+                setActiveOperand(operand)
             }
         } else if (isNaN(parseFloat(display))) {
             console.log('Fail to input negative value')
             setDisplay(baseNumber.toString())
-            setOperator(id)
+            setActiveOperand(operand)
             setNextNumberAwaited(true)
         } else {
-            console.log('Calculate automatically')
-            calculateResult()
-            setOperator(id)
-            setNextNumberAwaited(true)
+            const anotherNumber = parseFloat(display)
+            const result = calculate(baseNumber, anotherNumber, activeOperand)
+            console.log(`${baseNumber} ${OPERANDS[operand]} ${anotherNumber} = ${result}`)
+            setDisplay(result.toString())
+            setBaseNumber(result)
+
+            if (operand === OPERAND_EQUALS) {
+                setActiveOperand(null)
+            } else {
+                setActiveOperand(operand)
+                setNextNumberAwaited(true)
+            }
         }
     }
 
-    const onClickEquals = () => {
-        if (!operator) {
-            console.log('Missing operator')
-            return
+    const calculate = (baseNumber, anotherNumber, operand) => {
+        if (operand === OPERAND_ADD) {
+            return baseNumber + anotherNumber
+        } else if (operand === OPERAND_SUBTRACT) {
+            return baseNumber - anotherNumber
+        } else if (operand === OPERAND_MULTIPLY) {
+            return baseNumber * anotherNumber
+        } else if (operand === OPERAND_DIVIDE) {
+            return baseNumber / anotherNumber
         }
-        calculateResult()
     }
 
-    const hasDecimal = (string) => string.match(/\./g)
-
-    const calculateResult = () => {
-        const anotherNumber = parseFloat(display)
-        let result
-        switch (operator) {
-            case 'add':
-                result = baseNumber + anotherNumber
-                console.log(`${baseNumber} + ${anotherNumber} = ${result}`)
-                break
-            case 'subtract':
-                // check if operator is already set, must apply this to the 2nd value instead
-                result = baseNumber - anotherNumber
-                console.log(`${baseNumber} - ${anotherNumber} = ${result}`)
-                break
-            case 'multiply':
-                result = baseNumber * anotherNumber
-                console.log(`${baseNumber} × ${anotherNumber} = ${result}`)
-                break
-            case 'divide':
-                result = baseNumber / anotherNumber
-                console.log(`${baseNumber} ÷ ${anotherNumber} = ${result}`)
-                break
-            default:
-        }
-        setOperator(null)
-        setBaseNumber(result)
-        setDisplay(result.toString())
-    }
-
-    return (<div id="app">
-        <div id="horizontal">
-            <div id="clear" className="clear-bg" onClick={onClear}/>
-            <div id="display">{display}</div>
+    return (
+        <div id="app">
+            <div id="horizontal">
+                <Clear id="clear" onClear={onClear}/>
+                <InputDisplay id="display" display={display}/>
+            </div>
+            <div id="horizontal">
+                <ValueInput id="seven" value="7" onValueInputEnter={onValueInputEnter}/>
+                <ValueInput id="eight" value="8" onValueInputEnter={onValueInputEnter}/>
+                <ValueInput id="nine" value="9" onValueInputEnter={onValueInputEnter}/>
+                <Operand id="divide" operand={OPERAND_DIVIDE} onOperandEnter={onOperandEnter}/>
+            </div>
+            <div id="horizontal">
+                <ValueInput id="four" value="4" onValueInputEnter={onValueInputEnter}/>
+                <ValueInput id="five" value="5" onValueInputEnter={onValueInputEnter}/>
+                <ValueInput id="six" value="6" onValueInputEnter={onValueInputEnter}/>
+                <Operand id="multiply" operand={OPERAND_MULTIPLY} onOperandEnter={onOperandEnter}/>
+            </div>
+            <div id="horizontal">
+                <ValueInput id="one" value="1" onValueInputEnter={onValueInputEnter}/>
+                <ValueInput id="two" value="2" onValueInputEnter={onValueInputEnter}/>
+                <ValueInput id="three" value="3" onValueInputEnter={onValueInputEnter}/>
+                <Operand id="subtract" operand={OPERAND_SUBTRACT} onOperandEnter={onOperandEnter}/>
+            </div>
+            <div id="horizontal">
+                <ValueInput id="zero" value="0" onValueInputEnter={onValueInputEnter}/>
+                <ValueInput id="decimal" value="." onValueInputEnter={onValueInputEnter}/>
+                <Operand id="equals" operand={OPERAND_EQUALS} onOperandEnter={onOperandEnter}/>
+                <Operand id="add" operand={OPERAND_ADD} onOperandEnter={onOperandEnter}/>
+            </div>
         </div>
-        <div id="horizontal">
-            <label id="seven" className="small-key number-bg light" onClick={onClickNumber}>7</label>
-            <label id="eight" className="small-key number-bg light" onClick={onClickNumber}>8</label>
-            <label id="nine" className="small-key number-bg light" onClick={onClickNumber}>9</label>
-            <label id="divide" className="small-key operand-bg heavy" onClick={onClickOperand}>÷</label>
-        </div>
-        <div id="horizontal">
-            <label id="four" className="small-key number-bg light" onClick={onClickNumber}>4</label>
-            <label id="five" className="small-key number-bg light" onClick={onClickNumber}>5</label>
-            <label id="six" className="small-key number-bg light" onClick={onClickNumber}>6</label>
-            <label id="multiply" className="small-key operand-bg heavy" onClick={onClickOperand}>×</label>
-        </div>
-        <div id="horizontal">
-            <label id="one" className="small-key number-bg light" onClick={onClickNumber}>1</label>
-            <label id="two" className="small-key number-bg light" onClick={onClickNumber}>2</label>
-            <label id="three" className="small-key number-bg light" onClick={onClickNumber}>3</label>
-            <label id="subtract" className="small-key operand-bg heavy" onClick={onClickOperand}>-</label>
-        </div>
-        <div id="horizontal">
-            <label id="zero" className="small-key number-bg light" onClick={onClickNumber}>0</label>
-            <label id="decimal" className="small-key number-bg heavy" onClick={onClickNumber}>.</label>
-            <label id="equals" className="small-key operand-bg heavy" onClick={onClickEquals}>=</label>
-            <label id="add" className="small-key operand-bg heavy" onClick={onClickOperand}>+</label>
-        </div>
-    </div>);
+    )
 }
 
 export default App;

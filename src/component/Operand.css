@@ -1,0 +1,11 @@
+.operand-bg {
+    background: #f2a33c;
+}
+
+.operand-bg:active {
+    background: #ca8834;
+}
+
+.operand-font {
+    font-size: 22px;
+}

@@ -1,0 +1,12 @@
+.value-input-bg {
+    background: #7c7a7f;
+}
+
+.value-input-bg:active {
+    background: #636266;
+}
+
+.value-input-font {
+    font-size: 24px;
+    font-weight: lighter;
+}
